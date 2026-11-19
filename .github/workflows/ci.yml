@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Check formatting
+        run: cargo fmt --all --check
+      - name: Install cargo-llvm-cov
+        if: runner.os == 'macOS'
+        uses: taiki-e/install-action@cargo-llvm-cov
+      - name: Test with coverage
+        if: runner.os == 'macOS'
+        run: cargo llvm-cov --workspace --lcov --output-path lcov.info
+      - name: Upload coverage
+        if: runner.os == 'macOS' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: codecov/codecov-action@v5
+        with:
+          files: lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+      - name: Test
+        if: runner.os == 'Windows'
+        run: cargo test --workspace
