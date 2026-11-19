@@ -16,7 +16,7 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
@@ -30,7 +30,7 @@ jobs:
         run: cargo llvm-cov --workspace --lcov --output-path lcov.info
       - name: Upload coverage
         if: runner.os == 'macOS' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           files: lcov.info
           token: ${{ secrets.CODECOV_TOKEN }}
