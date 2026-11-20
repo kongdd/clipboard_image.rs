@@ -28,8 +28,18 @@ cargo install --path crates/clipboard-image
 cargo install --path crates/audio-player
 ```
 
-也可交叉编译 Windows 版本（需安装对应 Rust target 和 MinGW 工具链）：
+交叉编译 Windows x64 整套工具（需 rustup 和 MinGW-w64）：
 
 ```bash
-cargo build --workspace --bins --release --target x86_64-pc-windows-gnu
+./scripts/build-dist.sh windows-x64
 ```
+
+`dist/windows-x64/` 包含 `clipboard-image.exe`、`audio-player.exe`、`edge-tts-rust.exe` 和 `edge-tts-rust` 的 MIT 许可证。
+
+在 Apple Silicon Mac 上构建整套工具（需 rustup 和 Xcode 命令行工具）：
+
+```bash
+./scripts/build-dist.sh macos-arm64
+```
+
+`dist/macos-arm64/` 包含 `clipboard-image`、`audio-player`、`edge-tts-rust` 和 `edge-tts-rust` 的 MIT 许可证。
